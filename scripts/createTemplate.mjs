@@ -63,6 +63,20 @@ async function createTemplate() {
   addressField.setFontSize(14);
   addressField.defaultUpdateAppearances(font);
 
+  // Create chart placeholder field (determines where chart will be inserted)
+  // Adjust this field's position in a PDF editor to move the chart
+  const chartPlaceholder = form.createTextField('chart_placeholder');
+  chartPlaceholder.addToPage(page, {
+    x: 100,  // Chart will be inserted at this X position
+    y: 50,   // Chart will be inserted at this Y position (near bottom of page)
+    width: 400,  // Chart width
+    height: 240, // Chart height
+    borderWidth: 1, // Visible border to show placement area
+  });
+  chartPlaceholder.setText('[CHART WILL BE PLACED HERE]');
+  chartPlaceholder.setFontSize(10);
+  chartPlaceholder.defaultUpdateAppearances(font);
+
   const pdfBytes = await pdfDoc.save();
   writeFileSync('public/template.pdf', pdfBytes);
   console.log('Template PDF created at public/template.pdf');

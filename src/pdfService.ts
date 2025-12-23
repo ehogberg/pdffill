@@ -31,6 +31,15 @@ export async function fillPdfTemplate(formData: FormData): Promise<void> {
     // Get the form fields
     const nameField = form.getTextField('name')
     const addressField = form.getTextField('address')
+    const chartPlaceholder = form.getTextField('chart_placeholder')
+
+    // Get chart position from the placeholder field
+    const chartWidget = chartPlaceholder.acroField.getWidgets()[0]
+    const chartRect = chartWidget.getRectangle()
+    const chartX = chartRect.x
+    const chartY = chartRect.y
+    const chartWidth = chartRect.width
+    const chartHeight = chartRect.height
 
     // Fill in the form fields
     nameField.setText(formData.name)
@@ -44,24 +53,21 @@ export async function fillPdfTemplate(formData: FormData): Promise<void> {
     nameField.updateAppearances(font)
     addressField.updateAppearances(font)
 
+    // Remove the chart placeholder field before flattening
+    form.removeField(chartPlaceholder)
+
     // Flatten the form to make it read-only and remove field outlines
     form.flatten()
 
-    // Generate and insert bar chart
+    // Generate and insert bar chart at the position specified by the placeholder
     const chartImageBytes = await generateBarChartImage()
     const chartImage = await pdfDoc.embedPng(chartImageBytes)
 
-    // Get the first page and add the chart at the bottom
+    // Get the first page and add the chart
     const pages = pdfDoc.getPages()
     const firstPage = pages[0]
-    const { width } = firstPage.getSize()
 
-    // Insert chart at the bottom of the page
-    const chartWidth = 400
-    const chartHeight = 240
-    const chartX = (width - chartWidth) / 2 // Center horizontally
-    const chartY = 40 // 40 points from bottom
-
+    // Insert chart at the position from the placeholder field
     firstPage.drawImage(chartImage, {
       x: chartX,
       y: chartY,
