@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-react-app . --template typescript)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/createTemplate.mjs:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
